@@ -11,6 +11,8 @@
 // # Bootstrap scss
 @import 'bootstrap/scss/bootstrap';
 
+@import 'node_modules/@tomtom-international/web-sdk-plugin-searchbox/dist/SearchBox.css';
+
 body {
   font-family: 'Freeman', sans-serif;
   font-weight: 700;

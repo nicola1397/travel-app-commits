@@ -38,29 +38,35 @@
     <div class="close" @click="closeModal(day)">X</div>
     <div>
       <h3>GIORNO {{ day }}</h3>
-      <div class="row flex-column justify-space-around">
+      <div class="row justify-space-around">
         <div class="col-6">
-          <div>
-            <p>Nome</p>
-            <input type="text" placeholder="Nome" v-model="activity.name" required />
-          </div>
-          <div>
-            <p>Luogo</p>
-            <input type="text" placeholder="Location" v-model="searchTerm" required />
-            <br />
-            <button class="btn btn-warning" @click="search()">Localizza</button>
-          </div>
-          <div>
-            <p>Ora</p>
-            <input type="time" v-model="activity.time" />
+          <div class="mb-2">
+            <label for="name" class="form-label">Nome</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nome"
+              v-model="activity.name"
+              required
+            />
           </div>
 
-          <div>
-            <p>Note</p>
-            <textarea v-model="activity.note"></textarea>
+          <div class="mb-2">
+            <label for="" class="form-label">Ora</label>
+            <input type="time" class="form-control" v-model="activity.time" />
+          </div>
+
+          <div class="mb-2">
+            <label for="" class="form-label">Note</label>
+            <textarea class="form-control" v-model="activity.note"></textarea>
           </div>
 
           <button @click="pushActivity(day)">Aggiungi</button>
+        </div>
+        <div class="col-6">
+          <label for="" class="form-label">Luogo</label>
+          <div id="searchbox"></div>
+          <button @click="search()">Sorci</button>
         </div>
       </div>
     </div>
@@ -68,14 +74,13 @@
 </template>
 
 <script>
-import tt from '@tomtom-international/web-sdk-maps'
+import { services } from '@tomtom-international/web-sdk-services'
+import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox'
 import axios from 'axios'
 
 export default {
   data() {
     return {
-      // myTrip: {},
-      searchTerm: '',
       activity: {
         name: '',
         time: '',
@@ -84,8 +89,39 @@ export default {
       }
     }
   },
+  emits: ['fetchTrips'],
   props: { day: Number, myTrip: Object },
   methods: {
+    test() {
+      let searchTerm = document.querySelector('.tt-search-box-input').value
+      console.log('Cerco questo: ' + searchTerm)
+    },
+    searchBar() {
+      var options = {
+        searchOptions: {
+          key: 'qicXsxpR2GuZBNAJUJA0XBi1PHp4OzgD',
+          language: 'it-IT',
+          limit: 5
+        },
+        autocompleteOptions: {
+          key: 'qicXsxpR2GuZBNAJUJA0XBi1PHp4OzgD',
+          language: 'it-IT'
+        }
+      }
+      var ttSearchBox = new SearchBox(services, options)
+      var searchBoxHTML = ttSearchBox.getSearchBoxHTML()
+      const searchBox = document.getElementById('searchbox')
+      searchBox?.append(searchBoxHTML)
+      ttSearchBox.on('tomtom.searchbox.resultselected', this.handleResultSelection)
+    },
+    handleResultSelection(event) {
+      var result = event.data.result
+      let lat = result.position.lat
+      let lon = result.position.lng
+
+      this.activity.locationCoordinates = [lon, lat]
+      console.log('done')
+    },
     pushActivity(day) {
       let index = day - 1
       this.myTrip.activities[index].push(this.activity)
@@ -95,37 +131,41 @@ export default {
       let tripId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1)
       myTrips[tripId] = this.myTrip
       localStorage.setItem('trips', JSON.stringify(myTrips))
+      // this.search()
       this.closeModal(day)
-      // this.fetchTrips()
+      this.$emit('fetchTrips')
     },
     openModal(day) {
       let modal = document.getElementById('activity-modal-' + day)
       modal.style.display = 'block'
+      this.searchBar()
     },
     closeModal(day) {
       let modal = document.getElementById('activity-modal-' + day)
       modal.style.display = 'none'
-    },
-    async search() {
-      await axios
-        .get(
-          `https://api.tomtom.com/search/2/search/${this.searchTerm}.json?key=qicXsxpR2GuZBNAJUJA0XBi1PHp4OzgD&limit=10&language=it-IT`
-        )
-        .then((response) => {
-          console.log(response)
-
-          let lat = response.data.results[0].position.lat
-          let lon = response.data.results[0].position.lon
-          this.activity.locationCoordinates = [lon, lat]
-        })
-        .catch((error) => {
-          console.error(error)
-        })
     }
+    // async search() {
+    //   let searchTerm = document.querySelector('.tt-search-box-input').value
+    //   await axios
+    //     .get(
+    //       `https://api.tomtom.com/search/2/autocomplete/${searchTerm}.json?key=qicXsxpR2GuZBNAJUJA0XBi1PHp4OzgD&limit=10&language=it-IT`
+    //     )
+    //     .then((response) => {
+    //       console.log(response)
+
+    //       let lat = response.data.results[0].position.lat
+    //       let lon = response.data.results[0].position.lon
+    //       this.activity.locationCoordinates = [lon, lat]
+    //     })
+    //     .catch((error) => {
+    //       console.error(error)
+    //     })
+    // }
   },
 
   mounted() {
     // this.fetchTrips()
+    // this.searchBar()
   }
 }
 </script>
@@ -135,7 +175,7 @@ export default {
   display: none;
   background-color: white;
   z-index: 5;
-  width: auto;
+  width: 800px;
   overflow: hidden;
   position: absolute;
   top: 50%;
@@ -152,6 +192,10 @@ export default {
     &:hover {
       transform: scale(1.1);
     }
+  }
+
+  #searchbox > * {
+    margin-top: 0 !important;
   }
 }
 </style>

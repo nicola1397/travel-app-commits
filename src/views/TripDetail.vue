@@ -16,7 +16,7 @@
         </div>
       </div>
       <template v-for="days in myTrip.days">
-        <Planner :day="days" :myTrip="myTrip"></Planner>
+        <Planner :day="days" :myTrip="myTrip" @fetchTrips="this.fetchTrips()"></Planner>
       </template>
     </div>
   </div>
@@ -47,33 +47,23 @@ export default {
         let tripId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1)
         console.log(tripId)
         this.myTrip = myTrips[tripId]
+        this.retrieveMarkers(myTrips[tripId].activities)
       }
-      this.retrieveMarkers()
     },
-    retrieveMarkers() {
-      let trips = localStorage.getItem('trips')
-
-      if (trips) {
-        const myTrips = JSON.parse(trips)
-        let currentUrl = window.location.href
-        let tripId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1)
-        console.log(tripId)
-        let activities = myTrips[tripId].activities
-        activities.forEach((subArray) => {
-          subArray.forEach((item) => {
-            if (item.locationCoordinates) {
-              this.locations.push(item.locationCoordinates)
-            }
-          })
+    retrieveMarkers(activities) {
+      activities.forEach((subArray) => {
+        subArray.forEach((item) => {
+          if (item.locationCoordinates) {
+            this.locations.push(item.locationCoordinates)
+          }
         })
-      }
+      })
     }
   },
   components: { Planner, Map },
 
   mounted() {
     this.fetchTrips()
-    this.retrieveMarkers()
   }
 }
 </script>
