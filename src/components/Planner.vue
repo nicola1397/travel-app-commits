@@ -1,72 +1,72 @@
 <template>
   <!-- ACCORDION -->
   <div class="accordion accordion-flush" id="accordionFlushExample">
-    <div class="accordion-item">
+    <div v-for="(n, index) in days" class="accordion-item">
       <h2 class="accordion-header">
         <button
           class="accordion-button collapsed"
           type="button"
           data-bs-toggle="collapse"
-          :data-bs-target="`#flush-collapseOne-` + day"
+          :data-bs-target="`#flush-collapseOne-` + n"
           aria-expanded="false"
-          :aria-controls="`flush-collapseOne-` + day"
+          :aria-controls="`flush-collapseOne-` + n"
         >
-          GIORNO {{ day }}
+          GIORNO {{ n }}
         </button>
       </h2>
       <div
-        :id="`flush-collapseOne-` + day"
+        :id="`flush-collapseOne-` + n"
         class="accordion-collapse collapse"
         data-bs-parent="#accordionFlushExample"
       >
         <div class="accordion-body">
           <template v-if="myTrip.activities">
-            <div class="row" v-for="activity in myTrip.activities[day - 1]">
+            <div class="row" v-for="activity in myTrip.activities[n - 1]">
               <div class="col-4">{{ activity.name }}</div>
               <div class="col-4">{{ activity.time }}</div>
               <div class="col-4">{{ activity.note }}</div>
             </div>
           </template>
 
-          <button type="button" @click="openModal(day)">Aggiungi</button>
+          <button type="button" @click="openModal(index)">Aggiungi</button>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- MODAL -->
-  <div class="customModal" :id="'activity-modal-' + day">
-    <div class="close" @click="closeModal(day)">X</div>
-    <div>
-      <h3>GIORNO {{ day }}</h3>
-      <div class="row justify-space-around">
-        <div class="col-6">
-          <div class="mb-2">
-            <label for="name" class="form-label">Nome</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Nome"
-              v-model="activity.name"
-              required
-            />
-          </div>
+      <!-- MODAL -->
+      <div class="customModal" :id="'activity-modal-' + n">
+        <div class="close" @click="closeModal(n)">X</div>
+        <div>
+          <h3>GIORNO {{ n }}</h3>
+          <div class="row justify-space-around">
+            <div class="col-6">
+              <div class="mb-2">
+                <label for="name" class="form-label">Nome</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Nome"
+                  v-model="activity.name"
+                  required
+                />
+              </div>
 
-          <div class="mb-2">
-            <label for="" class="form-label">Ora</label>
-            <input type="time" class="form-control" v-model="activity.time" />
-          </div>
+              <div class="mb-2">
+                <label for="" class="form-label">Ora</label>
+                <input type="time" class="form-control" v-model="activity.time" />
+              </div>
 
-          <div class="mb-2">
-            <label for="" class="form-label">Note</label>
-            <textarea class="form-control" v-model="activity.note"></textarea>
-          </div>
+              <div class="mb-2">
+                <label for="" class="form-label">Note</label>
+                <textarea class="form-control" v-model="activity.note"></textarea>
+              </div>
 
-          <button @click="pushActivity(day)">Aggiungi</button>
-        </div>
-        <div class="col-6">
-          <label for="" class="form-label">Luogo</label>
-          <div id="searchbox"></div>
-          <button @click="search()">Sorci</button>
+              <button @click="pushActivity(n)">Aggiungi</button>
+            </div>
+            <div class="col-6">
+              <label for="" class="form-label">Luogo</label>
+              <div id="searchbox"></div>
+              <button @click="search()">Sorci</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@ export default {
     }
   },
   emits: ['fetchTrips'],
-  props: { day: Number, myTrip: Object },
+  props: { days: Number, myTrip: Object },
   methods: {
     test() {
       let searchTerm = document.querySelector('.tt-search-box-input').value

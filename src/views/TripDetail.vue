@@ -15,10 +15,9 @@
           </div>
         </div>
       </div>
-      <template v-for="days in myTrip.days">
-        <Planner :day="days" :myTrip="myTrip" @fetchTrips="this.fetchTrips()"></Planner>
-      </template>
     </div>
+
+    <Planner :days="myTrip.days" :myTrip="myTrip" @fetchTrips="this.fetchTrips()"></Planner>
   </div>
 </template>
 
