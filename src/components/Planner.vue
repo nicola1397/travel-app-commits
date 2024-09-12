@@ -28,44 +28,44 @@
             </div>
           </template>
 
-          <button type="button" @click="openModal(index)">Aggiungi</button>
+          <button type="button" @click="openModal(n)">Aggiungi</button>
         </div>
       </div>
-      <!-- MODAL -->
-      <div class="customModal" :id="'activity-modal-' + n">
-        <div class="close" @click="closeModal(n)">X</div>
-        <div>
-          <h3>GIORNO {{ n }}</h3>
-          <div class="row justify-space-around">
-            <div class="col-6">
-              <div class="mb-2">
-                <label for="name" class="form-label">Nome</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Nome"
-                  v-model="activity.name"
-                  required
-                />
-              </div>
-
-              <div class="mb-2">
-                <label for="" class="form-label">Ora</label>
-                <input type="time" class="form-control" v-model="activity.time" />
-              </div>
-
-              <div class="mb-2">
-                <label for="" class="form-label">Note</label>
-                <textarea class="form-control" v-model="activity.note"></textarea>
-              </div>
-
-              <button @click="pushActivity(n)">Aggiungi</button>
+    </div>
+    <!-- MODAL -->
+    <div class="customModal" :id="'activity-modal-' + n">
+      <div class="close" @click="closeModal(n)">X</div>
+      <div>
+        <h3>GIORNO {{ n }}</h3>
+        <div class="row justify-space-around">
+          <div class="col-6">
+            <div class="mb-2">
+              <label for="name" class="form-label">Nome</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Nome"
+                v-model="activity.name"
+                required
+              />
             </div>
-            <div class="col-6">
-              <label for="" class="form-label">Luogo</label>
-              <div id="searchbox"></div>
-              <button @click="search()">Sorci</button>
+
+            <div class="mb-2">
+              <label for="" class="form-label">Ora</label>
+              <input type="time" class="form-control" v-model="activity.time" />
             </div>
+
+            <div class="mb-2">
+              <label for="" class="form-label">Note</label>
+              <textarea class="form-control" v-model="activity.note"></textarea>
+            </div>
+
+            <button @click="pushActivity(n)">Aggiungi</button>
+          </div>
+          <div class="col-6">
+            <label for="" class="form-label">Luogo</label>
+            <div id="searchbox"></div>
+            <button @click="search()">Sorci</button>
           </div>
         </div>
       </div>
